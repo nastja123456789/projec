@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/movie_item_poster"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/foto1"
+            android:contentDescription="TODO"></ImageView>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/movie_item_tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:ellipsize="end"
+
+                app:layout_constraintBottom_toTopOf="@id/descriprion"
+                app:layout_constraintStart_toEndOf="@id/movie_item_poster"
+                app:layout_constraintTop_toTopOf="@id/movie_item_poster"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:ignore="UnknownId"
+                tools:layout_editor_absoluteX="111dp"
+                tools:layout_editor_absoluteY="16dp"
+                tools:text="Welcome to club"></TextView>
+
+            <TextView
+                android:id="@+id/descriprion"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:ellipsize="end"
+
+                app:layout_constraintBottom_toBottomOf="@id/movie_item_poster"
+                app:layout_constraintStart_toEndOf="@id/movie_item_poster"
+                app:layout_constraintTop_toTopOf="@id/movie_item_tv_name"
+                tools:text="When you will come with your friends.." />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
