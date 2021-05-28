@@ -1,6 +1,7 @@
 package com.example.p
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.project.R
 
+private const val TAG_EVENT_DESC = "TAG_EVENT_DESC"
 
 class DescriptionFragment : Fragment() {
     var title:String? = null

@@ -1,5 +1,7 @@
 package com.example.p
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,27 +13,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.project.NewEventFragment
 import com.example.project.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import service.NewEventService
 
+private const val TAG_EVENT = "TAG_EVENT"
 
 class EventScreenFragment : Fragment() {
-    var title_new:String? = null
-    var description_new: String? = null
-    var picture_new:Int? = null
+    private val movies = generateMovieList()
+    var adapter: MovieAdapter? = null
+    lateinit var newEventService: NewEventService
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val bundle = arguments
-        if (bundle != null) {
-            title_new = bundle.getString("title_new")
-            description_new = bundle.getString("context_new")
-            picture_new = bundle.getInt("image_new")
-        }
-        Log.d("title_new",title_new.toString())
-        Log.d("description_new",description_new.toString())
-        Log.d("picture_new",picture_new.toString())
-    }
-
-   override fun onCreateView(
+    override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
@@ -39,94 +30,72 @@ class EventScreenFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_event_screen, container, false)
     }
 
-    // override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-     //   super.onViewCreated(view, savedInstanceState)
-     //   var orientation = RecyclerView.VERTICAL
-//        var spanCount = 1
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+//        newEventService = NewEventService(context)
+//        checkService()
+    }
 
-  //      val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewFinishWork)
-    //    val layoutManager = GridLayoutManager(requireContext(), spanCount, orientation, false)
-
-
-    //}
-
-
-    private val movies = generateMovieList().toMutableList()
-    var adapter:MovieAdapter? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        newEventService = context?.let { NewEventService(it) }!!
+        checkService()
+        initAdapter(view)
+        setOnClick(view)
+    }
 
+    private fun initAdapter(view: View) {
         val rv_movie_list: RecyclerView = view.findViewById(R.id.recyclerViewFinishWork)
         adapter = fragmentManager?.let { MovieAdapter(movies, it) }
         rv_movie_list.adapter = adapter
         rv_movie_list.layoutManager = LinearLayoutManager(this.context)
-        val hello: FloatingActionButton = view.findViewById(R.id.hello)
-        //val hello = view?.findViewById<MaterialButton>(R.id.hello)
-        hello.setOnClickListener {
-            //     onClick()
-            val newEventFragment = NewEventFragment()
-            val bundle = Bundle()
-            newEventFragment.arguments = bundle
-            makeCurrentFragmentInMainWindow(newEventFragment, "descriptionFragment")
-        }
-//        val t = view.findViewById<TextView>(R.id.name)
-//        t.text = title_new
-//        val d = view.findViewById<TextView>(R.id.description)
-//        d.text = description_new
-//        val p = view.findViewById<ImageView>(R.id.poster)
-//        picture_new?.let { p.setImageResource(it) }
-//        movies.add(
-//                Movie(
-//                        "title_new",
-//                "context_new"
-//                )
-//        )
-//        adapter?.notifyDataSetChanged()
-//                //        onClick()
-//   }
 
-//
-//    fun onClick() {
-//        movies.add(
-//            Movie(
-//                "title_new",
-//                "context_new",
-//                R.drawable.foto
-//            )
-//        )
-//        adapter?.notifyDataSetChanged()
-//    }
-
-//    fun onClick() {
-//        val bundle = arguments
-//        bundle?.getString("description_new")?.let {
-//            Movie(
-//                    title = bundle?.getString("title_new")!!,
-//                    description = it,
-//                    picture = bundle?.getInt("image_new")
-//            )
-//        }?.let {
-//            movies.add(
-//                    it
-//        )
-//        }
-//        adapter?.notifyDataSetChanged()
-//    }
     }
-        fun generateMovieList(): List<Movie> {
-            return listOf(
-                    Movie(
-                            "Погнали в бар",
-                            "В 2:00 собираемся около главного входа в..",
-                            R.drawable.foto1
-                    ),
-                    Movie(
-                            "Давно не виделись",
-                            "Желательно не опаздывать, ждать не будем!",
-                            R.drawable.foto3
-                    )
+
+    private fun setOnClick(view: View) {
+        val hello: FloatingActionButton = view.findViewById(R.id.hello)
+        hello.setOnClickListener {
+            val newEventFragment = NewEventFragment()
+            makeCurrentFragmentInMainWindow(newEventFragment, "newEventFragment")
+        }
+    }
+
+    private fun checkService() {
+        Log.d(TAG_EVENT, newEventService.eventName.toString())
+        Log.d(TAG_EVENT, newEventService.eventDescription.toString())
+        Log.d(TAG_EVENT, newEventService.eventImage.toString())
+
+        //Вот это костыль, придумать как поменять
+        if(newEventService.eventName != null && newEventService.eventName != "" &&
+            newEventService.eventDescription != null && newEventService.eventDescription != "" &&
+            newEventService.eventImage != null && newEventService.eventImage != 0 ) {
+            movies.add(
+                Movie(
+                    newEventService.eventName!!,
+                    newEventService.eventDescription!!,
+                    R.drawable.foto1 //Сюда добавите нужную фотку
+                )
             )
         }
+        newEventService.saveEvenName("")
+        newEventService.saveEvenDescr("")
+        newEventService.saveEvenImage(0)
+    }
+
+    private fun generateMovieList(): ArrayList<Movie> {
+        return arrayListOf(
+            Movie(
+                "Погнали в бар",
+                "В 2:00 собираемся около главного входа в..",
+                R.drawable.foto1
+            ),
+            Movie(
+                "Давно не виделись",
+                "Желательно не опаздывать, ждать не будем!",
+                R.drawable.foto3
+            )
+        )
+    }
 
 
     private fun makeCurrentFragmentInMainWindow(fragment: Fragment, name: String) {
@@ -136,4 +105,4 @@ class EventScreenFragment : Fragment() {
             commit()
         }
     }
-    }
+}
